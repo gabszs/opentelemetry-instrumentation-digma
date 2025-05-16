@@ -8,9 +8,6 @@ from opentelemetry import trace
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Tracer
 
-import logging
-
-logger = logging.getLogger()
 
 class TracingDecoratorOptions:
     class NamingSchemes:
