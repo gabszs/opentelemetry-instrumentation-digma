@@ -1,8 +1,9 @@
 import asyncio
 import inspect
 from functools import wraps
-from typing import Callable, Optional
+from typing import Callable
 from typing import Dict
+from typing import Optional
 
 from opentelemetry import trace
 from opentelemetry.semconv.trace import SpanAttributes
@@ -120,9 +121,7 @@ def instrument(
         @wraps(func_or_class)
         def wrap_with_span_sync(*args, **kwargs):
             name = span_name or TracingDecoratorOptions.naming_scheme(func_or_class)
-            with tracer.start_as_current_span(
-                name, record_exception=record_exception
-            ) as span:
+            with tracer.start_as_current_span(name, record_exception=record_exception) as span:
                 _set_semantic_attributes(span, func_or_class)
                 _set_attributes(span, TracingDecoratorOptions.default_attributes)
                 _set_attributes(span, attributes)
@@ -131,9 +130,7 @@ def instrument(
         @wraps(func_or_class)
         async def wrap_with_span_async(*args, **kwargs):
             name = span_name or TracingDecoratorOptions.naming_scheme(func_or_class)
-            with tracer.start_as_current_span(
-                name, record_exception=record_exception
-            ) as span:
+            with tracer.start_as_current_span(name, record_exception=record_exception) as span:
                 _set_semantic_attributes(span, func_or_class)
                 _set_attributes(span, TracingDecoratorOptions.default_attributes)
                 _set_attributes(span, attributes)
@@ -142,11 +139,7 @@ def instrument(
         if ignore:
             return func_or_class
 
-        wrapper = (
-            wrap_with_span_async
-            if asyncio.iscoroutinefunction(func_or_class)
-            else wrap_with_span_sync
-        )
+        wrapper = wrap_with_span_async if asyncio.iscoroutinefunction(func_or_class) else wrap_with_span_sync
         wrapper.__signature__ = inspect.signature(func_or_class)
 
         return wrapper
